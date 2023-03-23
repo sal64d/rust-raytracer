@@ -28,22 +28,23 @@ fn main() -> io::Result<()> {
     const WIDTH: usize = 300;
     const HEIGHT: usize = 200;
 
-    let img_buffer = [[Color {
+    let mut img_buffer = [[Color {
         r: 1.0,
         g: 0.1,
         b: 0.5,
     }; WIDTH]; HEIGHT];
 
 
-    for (j, row) in img_buffer.iter().enumerate() {
-        for (i, cell) in rows.iter().enumerate() {
+    for (j, row) in img_buffer.iter_mut().enumerate() {
+        for (i, cell) in row.iter_mut().enumerate() {
             let x = i as f32 - ((WIDTH as f32) / 2f32);
             let y = j as f32 - ((HEIGHT as f32) / 2f32);
 
-            let p = Point {x, y, z: 0f32};
-
-            let camera = Point (x: 0f32, y: 0f32, z: -1f32);
-
+            //let p = Point {x, y, z: 0f32};
+            let g = (WIDTH as f32 - i as f32)/(WIDTH as f32 - 1f32);
+            let r = (j as f32)/(HEIGHT as f32 - 1f32);
+            let b = 0.1f32;
+            *cell = Color {r, g, b}
         }
     }
 
@@ -54,7 +55,7 @@ fn main() -> io::Result<()> {
 
 fn write_ppm(img_buffer: &[[Color; 300]; 200]) {
 
-    let fstr = img_buffer
+    let mut fstr = img_buffer
         .iter()
         .map(|row| {
             row.iter().map(|cell| {
@@ -68,6 +69,8 @@ fn write_ppm(img_buffer: &[[Color; 300]; 200]) {
         })
         .flatten()
         .fold(String::new(), |a, b| a + &b + "\n");
+
+    fstr.insert_str(0, "P3\n300 200\n255\n");
 
     // println!("{fstr}");
 
